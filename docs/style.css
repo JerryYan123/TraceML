@@ -131,6 +131,23 @@ strong { font-weight: 650; }
 .tldr ul { margin: 0; padding-left: 20px; }
 .tldr li { margin: 6px 0; }
 
+/* ---- summary + contents ---- */
+.intro-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 28px 0 8px; }
+@media (min-width: 1100px) {
+  .intro-grid { grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr); align-items: start; }
+}
+.intro-grid .tldr { margin: 0; }
+.toc { background: var(--surface); box-shadow: var(--shadow); border-radius: 10px; padding: 18px 20px; }
+.toc h2 { margin: 0 0 8px; font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.toc ol { counter-reset: toc; list-style: none; margin: 0; padding: 0; }
+.toc li { counter-increment: toc; margin: 5px 0; line-height: 1.4; }
+.toc li > a::before { content: counters(toc, ".") "  "; color: var(--muted); font-variant-numeric: tabular-nums; white-space: pre; }
+.toc ol ol { margin: 4px 0 6px; padding-left: 1.4em; font-size: 0.92em; }
+.toc a { color: var(--ink); text-decoration: none; }
+.toc a:hover { color: var(--accent-ink); text-decoration: underline; }
+/* land anchor jumps below the sticky top bar */
+[id] { scroll-margin-top: 72px; }
+
 /* ---- figures ---- */
 figure { margin: 28px 0; }
 /* Figures grow with the window: 85% of the content width on wide screens, at most 1500px, centered. */

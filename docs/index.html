@@ -52,6 +52,7 @@
   </div>
 </header>
 
+<div class="intro-grid">
 <section class="tldr" aria-labelledby="tldr-h">
   <h2 id="tldr-h">In short</h2>
   <ul>
@@ -61,6 +62,29 @@
     <li>A planning prompt of about 1,000 tokens distilled from human practice moves the behaviors it names and lifts scores on five of seven competitions. The agent's effort profile stays agent-shaped.</li>
   </ul>
 </section>
+  <nav class="toc" aria-labelledby="toc-h">
+    <h2 id="toc-h">Contents</h2>
+    <ol>
+      <li><a href="#records">What TraceML records</a></li>
+      <li><a href="#findings">Findings</a>
+        <ol>
+          <li><a href="#f1">Each agent collapses into a narrow loop</a></li>
+          <li><a href="#f2">Agents pivot too little or too much</a></li>
+          <li><a href="#f3">Agents recover scores but not abandoned approaches</a></li>
+          <li><a href="#f4">Agents ensemble in name only</a></li>
+          <li><a href="#f5">A planning prompt closes only the instructable part of the gap</a></li>
+        </ol>
+      </li>
+      <li><a href="#toolkit">Analyze your own agent</a>
+        <ol><li><a href="#example">Example: a one-hour Claude Code run</a></li></ol>
+      </li>
+      <li><a href="#data">Data and code</a>
+        <ol><li><a href="#caveats">Caveats</a></li></ol>
+      </li>
+      <li><a href="#cite">Citation</a></li>
+    </ol>
+  </nav>
+</div>
 
 </div>
 
@@ -96,7 +120,7 @@
   <h2 id="findings-h">Findings</h2>
   <p>All comparisons use the paired subset: seven competitions, a twelve-hour agent budget, and <code>gpt-5.4-mini</code> behind both scaffolds. Humans are not budget-matched and cannot be, so they serve as a reference distribution of public practice rather than a control.</p>
 
-  <div class="finding">
+  <div class="finding" id="f1">
     <span class="num">1</span>
     <h3>Each agent collapses into a narrow loop</h3>
     <p>At the level of coarse actions the separation is partial. MLEvolve's best branches sit 0.09 to 0.12 bits from every human cohort, while Codex sits about as close to top humans as the human cohorts sit to each other. Fine-grained actions separate what the coarse mix does not. Codex works around the submission: it re-weights ensembles, stacks models, adds members and tweaks post-processing at several times the human rate. MLEvolve mutates its model in place by averaging seeds, editing layers and changing epoch counts. Neither changes or checks direction: swapping a checkpoint, swapping a pretrained source and re-running unchanged code to verify a result all stay an order of magnitude below the human rate.</p>
@@ -109,7 +133,7 @@
 </figure>
 
 <div class="wrap">
-  <div class="finding">
+  <div class="finding" id="f2">
     <span class="num">2</span>
     <h3>Agents pivot too little or too much</h3>
     <p>A pivot is an edit that changes the backbone, the representation, the objective or the validation scheme. Codex and MLEvolve miss the human rate from opposite sides. The gap survives holding the code state fixed: matched to human versions in the same state, Codex is still out-pivoted three to one.</p>
@@ -133,7 +157,7 @@
     <p>Frequent pivots are not good pivots. Coding each of the three steps after a pivot as improving (+1) or regressing (−1), matched humans average +0.089 and MLEvolve −0.008. Codex rarely turns; MLEvolve turns without gain.</p>
   </div>
 
-  <div class="finding">
+  <div class="finding" id="f3">
     <span class="num">3</span>
     <h3>Agents recover scores but not abandoned approaches</h3>
     <p>A version <em>returns</em> when it resembles an earlier, non-adjacent version of its own trajectory more than its predecessor, with something dissimilar in between. Top humans do this routinely, and it pays. The agents effectively never do, although Codex climbs back from score setbacks more often than top humans.</p>
@@ -146,13 +170,13 @@
     <p>What the agents lack is memory, not recovery. Tuning forward to regain a score and returning to an earlier approach are different capabilities, and the agents have only the first. Together with the pivot result this describes a search without memory: from a given state the agent does not turn, and it does not go back.</p>
   </div>
 
-  <div class="finding">
+  <div class="finding" id="f4">
     <span class="num">4</span>
     <h3>Agents ensemble in name only</h3>
     <p>All three cohorts ensemble, but 78% of Codex's ensemble edits re-weight a member set it never grows, MLEvolve mostly averages seeds, and top humans put the largest share into adding a new member. For humans, an ensemble step that adds or changes a member raises the chance that the next version improves by 6.4 points, and one that only re-weights lowers it by 5.8 points. For Codex neither kind moves it. A checklist that only asks whether the agent ensembles would rank Codex above the top human cohort while its ensemble work does nothing. Edit size tells the same story: humans span the range, while Codex edits small and pays in steps and MLEvolve edits large and pays in waste.</p>
   </div>
 
-  <div class="finding">
+  <div class="finding" id="f5">
     <span class="num">5</span>
     <h3>A planning prompt closes only the part of the gap that reduces to instructions</h3>
     <p>The findings name specific behaviors, so the paper tests whether naming them in a prompt changes them. The skill is about 1,000 tokens: anti-loop constraints, human-prior practices (K-fold from the first version, an early ensemble, cached out-of-fold predictions, multi-model blending), periodic self-checks, and task-specific priors. Codex CLI receives it at the start of a 12-hour run and again every 30 minutes; the backend, tools, extraction pipeline and grader stay fixed.</p>
@@ -195,7 +219,7 @@ traceml analyze runs/my_run
   <p>The labelers download on first use. AIDE and MLEvolve search journals, and any git workspace that commits <code>submission.csv</code>, can be analyzed without recording.</p>
   <p>Without a GPU, <code>traceml analyze --skip-label</code> still extracts the trajectory and places its score against the human cohort, and <code>traceml from-released &lt;key_id&gt;</code> turns any trajectory of the dataset into the same report.</p>
 
-  <h3>Example: a one-hour Claude Code run</h3>
+  <h3 id="example">Example: a one-hour Claude Code run</h3>
   <p>Claude Code with the <code>claude-haiku-4.5</code> backend, recorded for one hour on CommonLit Readability. Its 14 grader calls collapse into 13 distinct code states. The best RMSE, 0.733, is better than 20% of the 103 human trajectories on this competition, each counted at its best score. Against top-10% humans on the same competition it spends fewer of its edits on ensembling (13% of action labels against 20%), none on validation, and more on training and infrastructure. Eleven of its twelve transitions are optimization; none are debugging or verification, which make up 12% and 6% of top-human transitions.</p>
   <figure class="demo">
     <div class="frame"><img src="figures/demo-actions.png" width="1280" height="800" loading="lazy" alt="Dot plot of coarse-action shares for the Claude Code run, top-10% humans and Codex. The run spends more of its edits on training and infrastructure and less on ensembling, validation and inference than top humans."></div>
@@ -227,7 +251,7 @@ state  = load_dataset("jerryyan/TraceML", "state",  split="paired").to_pandas()
 action = load_dataset("jerryyan/TraceML", "action", split="paired").to_pandas()</code></pre>
   <p class="muted">Annotations, schemas and dataset code are CC BY 4.0. The toolkit is Apache-2.0. The labeler weights inherit Apache-2.0 from Qwen3. Kaggle competition data is not redistributed, and human notebooks are included only under permissive licenses.</p>
 
-  <h3>Caveats</h3>
+  <h3 id="caveats">Caveats</h3>
   <ul>
     <li>Human trajectories come from public notebook histories, which record saved versions, not all work. Humans also work over weeks with different tooling, so they are a reference distribution, not a budget-matched control.</li>
     <li>Intent labels are inferred from code changes, not observed, and are used only at a coarse level together with actions, timing and scores.</li>
