@@ -15,8 +15,7 @@
   --code-bg: #f4f3ef;
   --figure-bg: #ffffff;
   --shadow: 0 1px 2px rgba(17, 17, 16, 0.06), 0 0 0 1px rgba(17, 17, 16, 0.06);
-  --maxw: 760px;
-  --wide: 980px;
+  --gutter: clamp(16px, 4vw, 72px);
   --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
@@ -70,7 +69,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font);
-  font-size: 17px;
+  font-size: clamp(16px, calc(13.5px + 0.3vw), 20px);
   line-height: 1.65;
   overflow-x: hidden;
 }
@@ -78,8 +77,8 @@ body {
 a { color: var(--accent-ink); text-underline-offset: 2px; }
 a:hover { color: var(--accent); }
 
-.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 16px; }
-.wrap-wide { max-width: var(--wide); margin: 0 auto; padding: 0 16px; }
+/* Fluid layout: content spans the window minus a margin that grows with it. */
+.wrap, .wrap-wide { margin: 0; padding: 0 var(--gutter); }
 
 /* ---- top bar ---- */
 .topbar {
@@ -117,8 +116,8 @@ h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.12; letter-spacing: -0.02
 
 /* ---- text ---- */
 section { padding: 8px 0; }
-h2 { font-size: 26px; letter-spacing: -0.015em; line-height: 1.25; margin: 56px 0 12px; }
-h3 { font-size: 19px; line-height: 1.35; margin: 36px 0 8px; }
+h2 { font-size: clamp(24px, calc(18px + 0.6vw), 32px); letter-spacing: -0.015em; line-height: 1.25; margin: 56px 0 12px; }
+h3 { font-size: clamp(18px, calc(15px + 0.3vw), 22px); line-height: 1.35; margin: 36px 0 8px; }
 p { margin: 0 0 16px; }
 .lede { font-size: 18px; color: var(--ink); }
 .muted { color: var(--muted); }
@@ -134,13 +133,15 @@ strong { font-weight: 650; }
 
 /* ---- figures ---- */
 figure { margin: 28px 0; }
-figure.wide { margin-left: calc(50% - min(50vw, var(--wide) / 2) + 16px); margin-right: calc(50% - min(50vw, var(--wide) / 2) + 16px); }
+/* Figures grow with the window up to their native resolution, then stay centered. */
+figure.wide { max-width: calc(1828px + 2 * var(--gutter)); margin: 32px auto; padding: 0 var(--gutter); }
+figure.demo { max-width: 1308px; margin: 24px auto; }
 figure .frame {
   background: var(--figure-bg); border-radius: 10px; padding: 14px;
   box-shadow: var(--shadow);
 }
 figure img { display: block; width: 100%; height: auto; }
-figcaption { margin-top: 10px; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+figcaption { margin-top: 10px; font-size: clamp(14px, calc(12px + 0.2vw), 16.5px); line-height: 1.55; color: var(--ink-2); }
 figcaption b { color: var(--ink); }
 
 /* ---- stat tiles ---- */
@@ -201,9 +202,6 @@ table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
 th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
 th { font-weight: 650; color: var(--ink-2); }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-
-.two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-@media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
 
 .note { font-size: 14.5px; color: var(--ink-2); border-left: 3px solid var(--rule); padding: 2px 0 2px 12px; margin: 16px 0; }
 

@@ -197,11 +197,11 @@ traceml analyze runs/my_run
 
   <h3>Example: a one-hour Claude Code run</h3>
   <p>Claude Code with the <code>claude-haiku-4.5</code> backend, recorded for one hour on CommonLit Readability. Its 14 grader calls collapse into 13 distinct code states. The best RMSE, 0.733, is better than 20% of the 103 human trajectories on this competition, each counted at its best score. Against top-10% humans on the same competition it spends fewer of its edits on ensembling (13% of action labels against 20%), none on validation, and more on training and infrastructure. Eleven of its twelve transitions are optimization; none are debugging or verification, which make up 12% and 6% of top-human transitions.</p>
-  <figure>
+  <figure class="demo">
     <div class="frame"><img src="figures/demo-actions.png" width="1280" height="800" loading="lazy" alt="Dot plot of coarse-action shares for the Claude Code run, top-10% humans and Codex. The run spends more of its edits on training and infrastructure and less on ensembling, validation and inference than top humans."></div>
     <figcaption>Coarse-action shares of the run against top-10% humans and the paper's Codex runs on the same competition.</figcaption>
   </figure>
-  <figure>
+  <figure class="demo">
     <div class="frame"><img src="figures/demo-progress.png" width="1280" height="680" loading="lazy" alt="Step chart of the run's best RMSE so far falling from 0.88 to 0.733 over the hour, above the shaded middle half of human trajectories (about 0.49 to 0.69) and the human median of 0.54."></div>
     <figcaption>Best score so far against the middle half of the human cohort (shaded) and its median. Lower RMSE is better.</figcaption>
   </figure>
