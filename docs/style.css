@@ -133,9 +133,13 @@ strong { font-weight: 650; }
 
 /* ---- figures ---- */
 figure { margin: 28px 0; }
-/* Figures grow with the window up to their native resolution, then stay centered. */
-figure.wide { max-width: calc(1828px + 2 * var(--gutter)); margin: 32px auto; padding: 0 var(--gutter); }
-figure.demo { max-width: 1308px; margin: 24px auto; }
+/* Figures grow with the window: 85% of the content width on wide screens, at most 1500px, centered. */
+figure.wide { margin: 32px 0; padding: 0 var(--gutter); }
+figure.wide > .frame, figure.wide > figcaption { width: min(100%, 1500px); margin-left: auto; margin-right: auto; }
+@media (min-width: 900px) {
+  figure.wide > .frame, figure.wide > figcaption { width: min(85%, 1500px); }
+}
+figure.demo { max-width: 1040px; margin: 24px auto; }
 figure .frame {
   background: var(--figure-bg); border-radius: 10px; padding: 14px;
   box-shadow: var(--shadow);
