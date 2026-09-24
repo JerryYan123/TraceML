@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you use TraceML or this toolkit, please cite the paper."
+title: "traceml-toolkit"
+type: software
+license: Apache-2.0
+repository-code: "https://github.com/JerryYan123/TraceML"
+url: "https://jerryyan123.github.io/TraceML/"
+authors:
+  - family-names: Yan
+    given-names: Jiarui
+  - family-names: Sun
+    given-names: Weiwei
+  - family-names: Li
+    given-names: Sijie
+  - family-names: Li
+    given-names: Wenhan
+  - family-names: Yang
+    given-names: Yiming
+preferred-citation:
+  type: article
+  title: "TraceML: An Empirical Analysis of Human-Agent Planning in Machine Learning Development"
+  authors:
+    - family-names: Yan
+      given-names: Jiarui
+    - family-names: Sun
+      given-names: Weiwei
+    - family-names: Li
+      given-names: Sijie
+    - family-names: Li
+      given-names: Wenhan
+    - family-names: Yang
+      given-names: Yiming
+  journal: "arXiv preprint arXiv:2608.26086"
+  year: 2026
+  url: "https://arxiv.org/abs/2608.26086"

@@ -1,0 +1,27 @@
+traceml-toolkit
+Copyright 2026 Jiarui Yan, Weiwei Sun, Sijie Li, Wenhan Li, Yiming Yang (Carnegie Mellon University)
+
+The toolkit source code is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This repository also redistributes material from the TraceML dataset
+(https://huggingface.co/datasets/jerryyan/TraceML), licensed under CC BY 4.0
+(https://creativecommons.org/licenses/by/4.0/):
+
+  * traceml_toolkit/resources/manifests/competitions.json   (competition manifest)
+  * traceml_toolkit/resources/schemas/*.json                 (label schemas and vocabularies)
+  * traceml_toolkit/labeling/prompts/*.py                    (labeler prompt text)
+  * examples/                                                (two recorded agent runs and their labels)
+  * tests/fixtures/dataset_subset/                           (a slice of the paired split)
+
+  Yan, J., Sun, W., Li, S., Li, W., Yang, Y. TraceML: An Empirical Analysis of
+  Human-Agent Planning in Machine Learning Development. arXiv:2608.26086, 2026.
+
+Rows of the dataset slice derive from Meta Kaggle (Apache 2.0); human notebook
+code is redistributed only under permissive licenses, as recorded in the dataset.
+
+The labeler weights downloaded at run time (models/qwen3-1.7b-{state,action})
+are fine-tuned from Qwen3-1.7B and licensed under Apache 2.0. Dataset labels
+that were produced by GPT-5-mini carry one extra condition (dataset LICENSE,
+section 3): they are not to be used to train competing general-purpose LLMs.
+
+The website figures under docs/figures/fig*.png are reproduced from the paper.

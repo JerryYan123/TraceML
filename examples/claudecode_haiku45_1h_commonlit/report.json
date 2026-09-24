@@ -1,0 +1,249 @@
+{
+  "run_name": "run_20260801_190617_haiku45_rec_1h_commonlitreadabilityprize",
+  "harness": "claude-code",
+  "competition": "commonlitreadabilityprize",
+  "metric": "RMSE",
+  "score_direction": "lower",
+  "reference": "paired",
+  "version_count": 13,
+  "grader_calls": 14,
+  "scored_versions": 13,
+  "best_score": 0.73304,
+  "human_percentile": 20.4,
+  "n_human_trajectories": 103,
+  "n_labeled_transitions": 12,
+  "action_distribution": {
+    "this_run": {
+      "data": 0.0952,
+      "features": 0.0952,
+      "augmentation": 0.0,
+      "model": 0.1111,
+      "training": 0.127,
+      "ensemble": 0.127,
+      "validation": 0.0,
+      "inference": 0.127,
+      "infra": 0.1905,
+      "housekeeping": 0.127
+    },
+    "codex": {
+      "data": 0.1224,
+      "features": 0.1327,
+      "augmentation": 0.0,
+      "model": 0.1224,
+      "training": 0.1122,
+      "ensemble": 0.1327,
+      "validation": 0.0918,
+      "inference": 0.1122,
+      "infra": 0.1224,
+      "housekeeping": 0.051
+    },
+    "mlev_best": {
+      "data": 0.1304,
+      "features": 0.1739,
+      "augmentation": 0.0,
+      "model": 0.1957,
+      "training": 0.1522,
+      "ensemble": 0.0217,
+      "validation": 0.0652,
+      "inference": 0.1304,
+      "infra": 0.087,
+      "housekeeping": 0.0435
+    },
+    "mlev_normal": {
+      "data": 0.0846,
+      "features": 0.1115,
+      "augmentation": 0.0038,
+      "model": 0.1923,
+      "training": 0.1577,
+      "ensemble": 0.1,
+      "validation": 0.05,
+      "inference": 0.1192,
+      "infra": 0.0769,
+      "housekeeping": 0.1038
+    },
+    "top10": {
+      "data": 0.0632,
+      "features": 0.0461,
+      "augmentation": 0.0,
+      "model": 0.1327,
+      "training": 0.0422,
+      "ensemble": 0.2037,
+      "validation": 0.0273,
+      "inference": 0.1881,
+      "infra": 0.1351,
+      "housekeeping": 0.1616
+    },
+    "top10-40": {
+      "data": 0.0829,
+      "features": 0.0685,
+      "augmentation": 0.0063,
+      "model": 0.1111,
+      "training": 0.1744,
+      "ensemble": 0.0622,
+      "validation": 0.0689,
+      "inference": 0.087,
+      "infra": 0.1403,
+      "housekeeping": 0.1984
+    },
+    "top40-70": {
+      "data": 0.0981,
+      "features": 0.1013,
+      "augmentation": 0.0096,
+      "model": 0.1293,
+      "training": 0.1394,
+      "ensemble": 0.0348,
+      "validation": 0.0495,
+      "inference": 0.0715,
+      "infra": 0.1605,
+      "housekeeping": 0.2059
+    },
+    "top70-100": {
+      "data": 0.0927,
+      "features": 0.1349,
+      "augmentation": 0.0,
+      "model": 0.1031,
+      "training": 0.1052,
+      "ensemble": 0.0152,
+      "validation": 0.0595,
+      "inference": 0.0851,
+      "infra": 0.1481,
+      "housekeeping": 0.2561
+    }
+  },
+  "jsd_bits": {
+    "top10": 0.0548,
+    "mlev_normal": 0.0568,
+    "top10-40": 0.0615,
+    "top40-70": 0.0639,
+    "codex": 0.0677,
+    "top70-100": 0.0902,
+    "mlev_best": 0.1118
+  },
+  "nearest_cohorts": [
+    "top10",
+    "mlev_normal",
+    "top10-40"
+  ],
+  "intent_shares": {
+    "this_run": {
+      "exploration": 0.0833,
+      "optimization": 0.9167,
+      "pivoting": 0.0,
+      "debugging": 0.0,
+      "restructuring": 0.0,
+      "verification": 0.0
+    },
+    "n_this_run": 12,
+    "codex": {
+      "exploration": 0.1176,
+      "optimization": 0.8235,
+      "pivoting": 0.0,
+      "debugging": 0.0588,
+      "restructuring": 0.0,
+      "verification": 0.0
+    },
+    "mlev_best": {
+      "exploration": 0.4,
+      "optimization": 0.6,
+      "pivoting": 0.0,
+      "debugging": 0.0,
+      "restructuring": 0.0,
+      "verification": 0.0
+    },
+    "mlev_normal": {
+      "exploration": 0.2623,
+      "optimization": 0.7213,
+      "pivoting": 0.0,
+      "debugging": 0.0164,
+      "restructuring": 0.0,
+      "verification": 0.0
+    },
+    "top10": {
+      "exploration": 0.0889,
+      "optimization": 0.7083,
+      "pivoting": 0.0,
+      "debugging": 0.1167,
+      "restructuring": 0.0278,
+      "verification": 0.0583
+    },
+    "top10-40": {
+      "exploration": 0.0695,
+      "optimization": 0.637,
+      "pivoting": 0.0,
+      "debugging": 0.1012,
+      "restructuring": 0.0266,
+      "verification": 0.1656
+    },
+    "top40-70": {
+      "exploration": 0.1274,
+      "optimization": 0.5067,
+      "pivoting": 0.0,
+      "debugging": 0.1778,
+      "restructuring": 0.0415,
+      "verification": 0.1467
+    },
+    "top70-100": {
+      "exploration": 0.1744,
+      "optimization": 0.3996,
+      "pivoting": 0.0,
+      "debugging": 0.1217,
+      "restructuring": 0.0467,
+      "verification": 0.2576
+    }
+  },
+  "cohort_sizes": {
+    "codex": {
+      "transitions": 17,
+      "trajectories": 1
+    },
+    "mlev_best": {
+      "transitions": 10,
+      "trajectories": 1
+    },
+    "mlev_normal": {
+      "transitions": 61,
+      "trajectories": 5
+    },
+    "top10": {
+      "transitions": 360,
+      "trajectories": 10
+    },
+    "top10-40": {
+      "transitions": 978,
+      "trajectories": 31
+    },
+    "top40-70": {
+      "transitions": 675,
+      "trajectories": 30
+    },
+    "top70-100": {
+      "transitions": 493,
+      "trajectories": 30
+    }
+  },
+  "memory": {
+    "grader_calls": 14,
+    "distinct_code_states": 13,
+    "redundancy": 0.0714,
+    "agent_sessions": 12,
+    "code_states_per_session": 1.08
+  },
+  "health": {
+    "sessions": 12,
+    "failed": 0,
+    "capped_by_recorder": 1,
+    "failed_share": 0.0,
+    "fatal_provider_errors": 0,
+    "healthy": true
+  },
+  "figures": {
+    "actions": "figs/fig1_actions.png",
+    "progress": "figs/fig2_progress.png"
+  },
+  "provenance": {
+    "toolkit_version": "0.1.0",
+    "reference_dataset": "jerryyan/TraceML",
+    "reference_revision": "9a3c790c2ad7c77bf5f56a851a72fc48b87afc4f",
+    "generated_at": "2026-09-23T22:03:12-0400"
+  }
+}

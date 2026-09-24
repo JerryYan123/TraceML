@@ -1,0 +1,17 @@
+{
+  "version": "0.1",
+  "date": "2026-04-30",
+  "coarse_tags": {
+    "data_io": "Data loading, cleaning, encoding, type conversion, missing value handling, normalization",
+    "feature_eng": "Derived features, feature selection, transformations, embeddings, target encoding",
+    "model_def": "Model architecture definition — class instantiation, backbone, head, layers, config",
+    "training_cfg": "Training loop, optimizer, scheduler, loss function, callbacks, hyperparameters, early stopping",
+    "ensemble_blend": "Multi-model combination — weighted average, stacking, blending, multi-seed averaging",
+    "validation_cv": "Cross-validation strategy, OOF predictions, evaluation metrics, fold scheme",
+    "inference_submit": "Prediction logic, post-processing, TTA, threshold tuning, submission file generation",
+    "infra_util": "Paths, environment, imports, logging, seed setting, GPU config, utility functions"
+  },
+  "fine_tag_policy": "seeded_open",
+  "fine_tag_policy_description": "LLM should prefer tags from the seed list but may propose new tags when none fit. New tags must have a parent coarse tag.",
+  "notes": "Iteration 0 — zero-shot, no few-shot exemplars. Schema will be refined after analyzing outputs."
+}

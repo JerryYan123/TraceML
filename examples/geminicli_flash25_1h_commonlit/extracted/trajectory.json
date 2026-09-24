@@ -1,0 +1,67 @@
+{
+  "run_dir": "<DATASET_ROOT>/planning-research/agent_data/runners/_active/gemini/runs/run_20260801_203455_flash25_rec_1h_commonlitreadabilityprize",
+  "harness": "gemini-cli",
+  "competition": "commonlitreadabilityprize",
+  "score_direction": "lower",
+  "score_type": "held-out",
+  "n_tags_total": 3,
+  "n_dedup_merged": 1,
+  "version_count": 2,
+  "versions": [
+    {
+      "version_number": 1,
+      "commit": "f0fc7a56",
+      "ctime": 1785631022,
+      "date": "2026-08-01T20:37:02",
+      "code_path": "versions/v001.py",
+      "code_all_path": "versions/v001_all.txt",
+      "linked_score": 0.75406,
+      "score_type": "held-out",
+      "agent_metadata": {
+        "harness": "gemini-cli",
+        "tree_fp": "c5c781b01e0fe5413972da93a90bc9bf",
+        "main_file": "baseline.py",
+        "code_files": [
+          "baseline.py"
+        ],
+        "first_tag_n": 1,
+        "tag_names": [
+          "v1-true-0.75406"
+        ],
+        "dedup_scores": [
+          0.75406
+        ]
+      }
+    },
+    {
+      "version_number": 2,
+      "commit": "8104dfdc",
+      "ctime": 1785632704,
+      "date": "2026-08-01T21:05:04",
+      "code_path": "versions/v002.py",
+      "code_all_path": "versions/v002_all.txt",
+      "linked_score": 0.49086,
+      "score_type": "held-out",
+      "agent_metadata": {
+        "harness": "gemini-cli",
+        "tree_fp": "d7cb8f3536565bddd254957b1c47644e",
+        "main_file": "train.py",
+        "code_files": [
+          "baseline.py",
+          "ensemble.py",
+          "train.py",
+          "train_roberta.py"
+        ],
+        "first_tag_n": 2,
+        "tag_names": [
+          "v2-true-0.51806",
+          "v3-true-0.49086"
+        ],
+        "dedup_scores": [
+          0.51806,
+          0.49086
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.12"]
+    env:
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Lint
+        run: ruff check traceml_toolkit tests scripts
+      - name: Tests (CPU only, no downloads)
+        run: pytest -q --timeout=180
+      - name: Smoke test the CLI on a shipped example
+        run: |
+          cp -r examples/claudecode_haiku45_1h_commonlit "$RUNNER_TEMP/example"
+          traceml report "$RUNNER_TEMP/example" --dataset-dir tests/fixtures/dataset_subset
+          test -s "$RUNNER_TEMP/example/report.md"
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check local links and images of the website
+        run: python scripts/dev/check_docs_links.py docs

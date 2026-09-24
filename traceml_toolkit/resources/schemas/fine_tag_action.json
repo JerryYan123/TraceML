@@ -1,0 +1,114 @@
+{
+  "version": "0.2",
+  "date": "2026-05-01",
+  "description": "Fine action tags for Phase 2 transition annotation. Each tag has a parent coarse action. Confidence: high/mid/low.",
+  "policy": "closed_list_with_other",
+  "policy_description": "Use tags from the list. If no tag fits, use other_<parent> with proposed_tag + description.",
+  "tags": {
+    "data": {
+      "_doc": "Data loading, cleaning, encoding changes",
+      "data_loading": "Changed how data is loaded (read_csv, paths, file format)",
+      "data_cleaning": "Data cleaning, filtering, deduplication, outlier removal",
+      "data_encoding": "Type conversion, category encoding, dtype changes",
+      "missing_value_handling": "Changed missing value strategy (fillna, impute, drop)",
+      "dataset_split": "Changed train/test/holdout split (not CV — that's validation)",
+      "dataset_adapter": "Adapted data for different format or API (e.g. Dataset class, DataLoader)",
+      "other_data": "Doesn't fit above — provide proposed_tag + description"
+    },
+    "features": {
+      "_doc": "Feature engineering changes",
+      "add_feature": "Added new feature(s)",
+      "remove_feature": "Removed or dropped feature(s)",
+      "feature_selection": "Applied feature selection method (importance, mutual info, SelectK)",
+      "text_vectorization": "Changed text vectorization (TF-IDF, CountVectorizer, embeddings)",
+      "groupby_aggregation": "Added/changed groupby aggregate features",
+      "lag_rolling": "Added/changed lag, shift, or rolling window features",
+      "scaling_normalization": "Changed scaler or normalization method",
+      "target_transform": "Changed target variable transformation (log, rank, survival transform)",
+      "image_resize": "Changed image input size or resize parameters",
+      "image_preprocessing": "Changed domain-specific image preprocessing (crop, contrast, color space)",
+      "other_features": "Doesn't fit above — provide proposed_tag + description"
+    },
+    "augmentation": {
+      "_doc": "Data augmentation changes",
+      "image_augmentation": "Changed image augmentation (albumentations, transforms)",
+      "text_augmentation": "Changed text augmentation (backtranslation, synonym, noise)",
+      "mixup_cutmix": "Added/changed Mixup/CutMix/CutOut",
+      "augmentation_params": "Tuned augmentation parameters (probability, magnitude)",
+      "other_augmentation": "Doesn't fit above — provide proposed_tag + description"
+    },
+    "model": {
+      "_doc": "Architecture or backbone changes",
+      "swap_backbone": "Replaced model backbone entirely (e.g. ResNet→EfficientNet, LGBM→XGBoost)",
+      "add_head": "Added or changed prediction head / output layer",
+      "freeze_unfreeze": "Changed which layers are frozen/unfrozen",
+      "pretrained_swap": "Changed pretrained weights or checkpoint",
+      "checkpoint_swap": "Switched to a different saved checkpoint or epoch (same model, different weights)",
+      "layer_modification": "Added/removed/modified internal layers (dropout, attention, etc.)",
+      "custom_module_change": "Modified a custom nn.Module or model class definition",
+      "add_model_to_ensemble": "Added a new model type (distinct from ensemble weight changes)",
+      "other_model": "Doesn't fit above — provide proposed_tag + description"
+    },
+    "training": {
+      "_doc": "Training config: optimizer, loss, scheduler, hparams",
+      "lr_change": "Changed learning rate value",
+      "optimizer_swap": "Changed optimizer type (Adam→AdamW, SGD→Adam, etc.)",
+      "scheduler_change": "Changed LR scheduler (cosine, step, plateau, warmup, etc.)",
+      "loss_change": "Changed loss function",
+      "epoch_change": "Changed number of epochs or training iterations",
+      "batch_size_change": "Changed batch size",
+      "regularization_change": "Changed regularization (dropout, weight decay, label smoothing)",
+      "early_stopping_change": "Added/changed/removed early stopping or patience",
+      "class_weight_change": "Changed class weights or sample weights for imbalanced data",
+      "hparam_single_knob": "Tuned one non-LR hyperparameter",
+      "hparam_multi_knob": "Tuned multiple hyperparameters simultaneously",
+      "gradient_config": "Changed gradient clipping, accumulation, or mixed precision",
+      "other_training": "Doesn't fit above — provide proposed_tag + description"
+    },
+    "ensemble": {
+      "_doc": "Model combination changes",
+      "add_member": "Added model to ensemble",
+      "remove_member": "Removed model from ensemble",
+      "change_weights": "Changed ensemble blend weights",
+      "stacking": "Added or changed stacking / meta-learner",
+      "seed_averaging": "Changed multi-seed or multi-fold averaging",
+      "other_ensemble": "Doesn't fit above — provide proposed_tag + description"
+    },
+    "validation": {
+      "_doc": "CV/evaluation strategy changes",
+      "cv_scheme": "Changed CV strategy (KFold, StratifiedKFold, GroupKFold, etc.)",
+      "fold_count": "Changed number of folds",
+      "metric_change": "Changed evaluation metric or added custom metric",
+      "split_strategy": "Changed train/val split logic (not the dataset split — that's data)",
+      "other_validation": "Doesn't fit above — provide proposed_tag + description"
+    },
+    "inference": {
+      "_doc": "Prediction/post-processing/submission changes",
+      "tta_change": "Added/changed test-time augmentation",
+      "postprocess_change": "Changed post-processing (clipping, rounding, thresholds)",
+      "threshold_tune": "Tuned decision threshold",
+      "submission_format": "Changed submission file format or generation logic",
+      "other_inference": "Doesn't fit above — provide proposed_tag + description"
+    },
+    "infra": {
+      "_doc": "Environment/IO/config/path changes",
+      "dependency_mgmt": "Added/removed/changed imports or pip installs",
+      "gpu_config": "Changed GPU/device config (CUDA, mixed precision setup)",
+      "io_optimize": "Changed I/O (caching, preloading, memory mapping)",
+      "run_config": "Changed paths, seeds, random state, global config",
+      "logging_wandb": "Added/changed logging, W&B, or experiment tracking",
+      "other_infra": "Doesn't fit above — provide proposed_tag + description"
+    },
+    "housekeeping": {
+      "_doc": "Debug fix, refactor, cosmetic, noop",
+      "error_fix": "Fixed a bug or runtime error",
+      "syntax_fix": "Fixed syntax error, typo, or import error",
+      "code_restructure": "Refactored code structure (extract function, reorganize cells)",
+      "cosmetic": "Cosmetic change (comments, print formatting, variable rename)",
+      "noop": "Re-run with no meaningful code change",
+      "revert": "Reverted to a previous version or undid a change",
+      "run_mode_toggle": "Toggled train/inference mode by commenting/uncommenting blocks",
+      "other_housekeeping": "Doesn't fit above — provide proposed_tag + description"
+    }
+  }
+}

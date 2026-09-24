@@ -1,0 +1,82 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "traceml-toolkit"
+dynamic = ["version"]
+description = "Turn an ML-engineering agent run into a TraceML trajectory and a behavior report against human Kaggle cohorts."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+requires-python = ">=3.10"
+authors = [
+  { name = "Jiarui Yan" },
+  { name = "Weiwei Sun" },
+  { name = "Sijie Li" },
+  { name = "Wenhan Li" },
+  { name = "Yiming Yang" },
+]
+keywords = ["llm-agents", "trajectory-analysis", "kaggle", "mle-bench", "machine-learning-engineering"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Operating System :: POSIX :: Linux",
+  "Operating System :: MacOS",
+]
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "pyarrow>=14",
+  "matplotlib>=3.7",
+  "huggingface_hub>=0.23",
+]
+
+[project.optional-dependencies]
+# GPU labeling with the released labelers (the configuration the paper used).
+label = [
+  "vllm==0.8.5; python_version < '3.13'",
+  "transformers==4.51.3",
+]
+# Slow fallback labeling without vLLM (CPU, Apple MPS or a single CUDA GPU).
+transformers = [
+  "torch>=2.2",
+  "transformers>=4.51,<5",
+]
+dev = [
+  "pytest>=8",
+  "pytest-timeout>=2.2",
+  "ruff>=0.5",
+]
+
+[project.scripts]
+traceml = "traceml_toolkit.cli:main"
+
+[project.urls]
+Homepage = "https://jerryyan123.github.io/TraceML/"
+Repository = "https://github.com/JerryYan123/TraceML"
+Paper = "https://arxiv.org/abs/2608.26086"
+Dataset = "https://huggingface.co/datasets/jerryyan/TraceML"
+
+[tool.hatch.version]
+path = "traceml_toolkit/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["traceml_toolkit"]
+
+[tool.hatch.build.targets.sdist]
+include = ["traceml_toolkit", "tests", "examples", "scripts", "README.md", "CHANGELOG.md", "LICENSE", "NOTICE", "CITATION.cff"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["gpu: needs a CUDA GPU, vLLM and the downloaded labelers"]
+addopts = "-m 'not gpu'"
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501", "B008", "UP007", "B905"]

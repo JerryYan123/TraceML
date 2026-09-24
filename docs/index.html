@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TraceML: Human-Agent Planning in ML Development</title>
+<meta name="description" content="TraceML pairs 4,465 human Kaggle development trajectories with LLM-agent runs on the same competitions, labels every code version and edit, and shows where agents' development process departs from experts'. Dataset, paper and an open-source toolkit to analyze your own agent.">
+<meta property="og:title" content="TraceML: An Empirical Analysis of Human-Agent Planning in Machine Learning Development">
+<meta property="og:description" content="Version-level human and agent ML-development trajectories, the findings they support, and a toolkit to read any agent run against human practice.">
+<meta property="og:image" content="https://jerryyan123.github.io/TraceML/figures/fig1-trajectories.png">
+<meta property="og:url" content="https://jerryyan123.github.io/TraceML/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23111110'/%3E%3Cpath d='M6 22 L12 16 L17 19 L26 9' stroke='%236ea4f0' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap-wide">
+    <a class="brand" href="#top">TraceML</a>
+    <nav aria-label="Sections">
+      <a href="#findings">Findings</a>
+      <a href="#toolkit">Toolkit</a>
+      <a href="#data" class="hide-sm">Data</a>
+      <a href="#cite">Cite</a>
+    </nav>
+  </div>
+</div>
+
+<main id="top">
+<div class="wrap">
+
+<header class="hero">
+  <p class="kicker">Dataset · Analysis · Toolkit</p>
+  <h1>TraceML</h1>
+  <p class="subtitle">An Empirical Analysis of Human-Agent Planning in Machine Learning Development</p>
+  <p class="authors">Jiarui Yan, Weiwei Sun, Sijie Li, Wenhan Li, Yiming Yang</p>
+  <p class="affil">Carnegie Mellon University</p>
+  <p class="venue">arXiv:2608.26086, August 2026 · COLM 2026 Workshop on Agent Behavior</p>
+  <div class="buttons">
+    <a class="btn primary" href="https://arxiv.org/abs/2608.26086">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 1.5h5.5L13 5v9.5H4z"/><path d="M9.5 1.5V5H13M6 8.5h5M6 11h5"/></svg>Paper</a>
+    <a class="btn" href="https://huggingface.co/datasets/jerryyan/TraceML">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><ellipse cx="8" cy="3.5" rx="5.5" ry="2"/><path d="M2.5 3.5v9c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2v-9M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2"/></svg>Dataset</a>
+    <a class="btn" href="https://github.com/JerryYan123/TraceML">
+      <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.5 15.6c.4 0 .5-.2.5-.4v-1.5c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.4.7 0-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.6 7.6 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.8-3.6 4 .3.3.6.8.6 1.5v2.2c0 .2.1.5.6.4A8 8 0 0 0 8 .2z"/></svg>Code</a>
+    <a class="btn" href="#cite">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 9.5V13h3.5V9.5H4.5c0-2 .7-3.5 2-4.5M9.5 9.5V13H13V9.5h-2c0-2 .7-3.5 2-4.5"/></svg>Cite</a>
+  </div>
+</header>
+
+<section class="tldr" aria-labelledby="tldr-h">
+  <h2 id="tldr-h">In short</h2>
+  <ul>
+    <li>Benchmarks such as MLE-bench grade the final submission and discard the development process behind it. TraceML keeps that process: every code version of a run, with its score, what it contains, and what each edit did and why.</li>
+    <li>It holds <strong>4,465 human Kaggle trajectories on 134 competitions</strong>. On seven of them, <strong>430 human and 207 agent trajectories</strong> (Codex CLI and MLEvolve) are paired under one schema.</li>
+    <li>Experts alternate data work, validation, model changes and ensembling, and return to approaches they had set aside. Each agent collapses into a narrow loop and neither pivots at the human rate nor reopens abandoned work.</li>
+    <li>A planning prompt of about 1,000 tokens distilled from human practice moves the behaviors it names and lifts scores on five of seven competitions. The agent's effort profile stays agent-shaped.</li>
+  </ul>
+</section>
+
+</div>
+
+<figure class="wide">
+  <div class="frame"><img src="figures/fig1-trajectories.png" width="1800" height="819" alt="Three stylized development trajectories with a ribbon of per-edit actions under each. Top humans mix data, feature, model, validation and ensemble edits, pivot when behind and re-open an earlier line that ends higher. Codex stays in one narrow band of ensembling and submission edits while its score flattens. MLEvolve oscillates, pivoting repeatedly with net gain near zero, through in-model mutations."></div>
+  <figcaption><b>Figure 1.</b> Stylized trajectories with per-edit action ribbons, one panel per cohort. Humans mix actions, pivot when behind, and reopen abandoned lines; Codex maintains one solution through small submission-side edits; MLEvolve mutates its model in place.</figcaption>
+</figure>
+
+<div class="wrap">
+
+<section id="records" aria-labelledby="records-h">
+  <h2 id="records-h">What TraceML records</h2>
+  <p>A human leaves a public Kaggle notebook history built up over weeks. An agent leaves a git working directory or a tree-search journal produced in hours. TraceML maps both onto one representation: an ordered sequence of code versions, each with its leaderboard score and timestamp. Every agent version is re-graded with the held-out MLE-bench evaluator, not only the final submission.</p>
+  <p>Each version is labeled with the ML-pipeline stages it contains (8 coarse and 136 fine tags). Each transition between versions is labeled with the actions it performs (10 coarse and 85 fine tags), its intent (6 classes), the size of the edit, and its effect on the score. Two distilled Qwen3-1.7B labelers, trained on schema-constrained labels from a larger GPT teacher model, make labeling all 151,088 versions feasible.</p>
+  <div class="stats" role="list">
+    <div class="stat" role="listitem"><div class="v">4,465</div><div class="l">human trajectories</div></div>
+    <div class="stat" role="listitem"><div class="v">134</div><div class="l">Kaggle competitions</div></div>
+    <div class="stat" role="listitem"><div class="v">430 + 207</div><div class="l">paired human and agent trajectories on 7 competitions</div></div>
+    <div class="stat" role="listitem"><div class="v">151,088</div><div class="l">code versions, each labeled</div></div>
+  </div>
+</section>
+
+</div>
+
+<figure class="wide">
+  <div class="frame"><img src="figures/fig2-pipeline.png" width="1800" height="904" loading="lazy" alt="Pipeline in four stages. Raw traces from Meta Kaggle notebooks, Codex git commits and MLEvolve search branches are extracted into one unified version record (code, score, time, trajectory and version ids). A state labeler outputs 8 coarse and 136 fine tags per version; an action and intent labeler reads the code diff and both states and outputs 10 coarse and 85 fine action tags, 6 intent classes and the score effect. Released artifacts are state and action parquet tables, schemas and prompts, and the Qwen labeler checkpoints."></div>
+  <figcaption><b>Figure 2.</b> The reconstruction pipeline: notebook histories, git commits and search journals become one version-level representation.</figcaption>
+</figure>
+
+<div class="wrap">
+
+<section id="findings" aria-labelledby="findings-h">
+  <h2 id="findings-h">Findings</h2>
+  <p>All comparisons use the paired subset: seven competitions, a twelve-hour agent budget, and <code>gpt-5.4-mini</code> behind both scaffolds. Humans are not budget-matched and cannot be, so they serve as a reference distribution of public practice rather than a control.</p>
+
+  <div class="finding">
+    <span class="num">1</span>
+    <h3>Each agent collapses into a narrow loop</h3>
+    <p>At the level of coarse actions the separation is partial. MLEvolve's best branches sit 0.09 to 0.12 bits from every human cohort, while Codex sits about as close to top humans as the human cohorts sit to each other. Fine-grained actions separate what the coarse mix does not. Codex works around the submission: it re-weights ensembles, stacks models, adds members and tweaks post-processing at several times the human rate. MLEvolve mutates its model in place by averaging seeds, editing layers and changing epoch counts. Neither changes or checks direction: swapping a checkpoint, swapping a pretrained source and re-running unchanged code to verify a result all stay an order of magnitude below the human rate.</p>
+  </div>
+</div>
+
+<figure class="wide">
+  <div class="frame"><img src="figures/fig3-action-profiles.png" width="1800" height="1490" loading="lazy" alt="Four panels. (a) PCA of per-trajectory coarse-action mixes: human cohorts overlap on the left, MLEvolve sits to the right, Codex near top humans. (b) Pairwise Jensen-Shannon divergence: 0.02 between Codex and top-10% humans, 0.09 to 0.12 between MLEvolve-best and every human cohort. (c) Radar plot of coarse-action profiles. (d) Fine-action usage relative to pooled humans: an MLEvolve loop of edit layers, change epochs and average seeds; a Codex loop of stack models, tweak post-processing, add member and re-weight ensemble; and a shared gap where both rarely swap checkpoints, swap pretrained sources or re-run to check."></div>
+  <figcaption><b>Figure 3.</b> Action profiles at two resolutions. <b>(a)</b> PCA of per-trajectory coarse-action distributions; <b>(b)</b> pairwise Jensen-Shannon divergence between cohorts; <b>(c)</b> coarse-action profiles; <b>(d)</b> fine-action usage relative to pooled humans, Codex against MLEvolve. The labeled clusters are the two scaffold loops and the gap they share.</figcaption>
+</figure>
+
+<div class="wrap">
+  <div class="finding">
+    <span class="num">2</span>
+    <h3>Agents pivot too little or too much</h3>
+    <p>A pivot is an edit that changes the backbone, the representation, the objective or the validation scheme. Codex and MLEvolve miss the human rate from opposite sides. The gap survives holding the code state fixed: matched to human versions in the same state, Codex is still out-pivoted three to one.</p>
+    <div class="chart" id="pivot-chart">
+      <p class="chart-title">Share of transitions that pivot</p>
+      <p class="chart-sub">Paired subset; the gray bar and the vertical line mark the human rate.</p>
+      <div class="bars" role="img" aria-label="Humans pivot on 25% of transitions, Codex on 9%, MLEvolve on 58%.">
+        <div class="bars-ref" style="left: calc(var(--label-w) + 10px + (100% - var(--label-w) - 10px) * 0.3125)" aria-hidden="true"></div>
+        <div class="row" tabindex="0" data-tip="Humans: 25% of transitions are pivots. After a pivot, the next three steps average +0.089 (improving = +1, regressing = −1).">
+          <span class="name">Humans</span><span class="track"><span class="fill ref" style="width:31.25%"></span><span class="v">25%</span></span>
+        </div>
+        <div class="row" tabindex="0" data-tip="Codex: 9% of transitions are pivots. Matched to humans in the same code state, it is out-pivoted three to one.">
+          <span class="name">Codex</span><span class="track"><span class="fill" style="width:11.25%"></span><span class="v">9%</span></span>
+        </div>
+        <div class="row" tabindex="0" data-tip="MLEvolve: 58% of transitions are pivots. After a pivot, the next three steps average −0.008: gains and losses cancel.">
+          <span class="name">MLEvolve</span><span class="track"><span class="fill" style="width:72.5%"></span><span class="v">58%</span></span>
+        </div>
+      </div>
+      <div class="tooltip" role="status" aria-live="polite"></div>
+    </div>
+    <p>Frequent pivots are not good pivots. Coding each of the three steps after a pivot as improving (+1) or regressing (−1), matched humans average +0.089 and MLEvolve −0.008. Codex rarely turns; MLEvolve turns without gain.</p>
+  </div>
+
+  <div class="finding">
+    <span class="num">3</span>
+    <h3>Agents recover scores but not abandoned approaches</h3>
+    <p>A version <em>returns</em> when it resembles an earlier, non-adjacent version of its own trajectory more than its predecessor, with something dissimilar in between. Top humans do this routinely, and it pays. The agents effectively never do, although Codex climbs back from score setbacks more often than top humans.</p>
+    <div class="tiles">
+      <div class="tile"><div class="who">Top humans</div><div class="v">9%</div><div class="l">of eligible versions return to earlier work; 78% of those returns end higher</div></div>
+      <div class="tile"><div class="who">Codex</div><div class="v">1 of 658</div><div class="l">eligible versions returns, where the top-human rate predicts 60</div></div>
+      <div class="tile"><div class="who">MLEvolve</div><div class="v">0 of 344</div><div class="l">eligible versions return, where the top-human rate predicts 31</div></div>
+      <div class="tile"><div class="who">Setbacks recovered</div><div class="v">89% vs 79%</div><div class="l">Codex against top humans: recovering a score is not the problem</div></div>
+    </div>
+    <p>What the agents lack is memory, not recovery. Tuning forward to regain a score and returning to an earlier approach are different capabilities, and the agents have only the first. Together with the pivot result this describes a search without memory: from a given state the agent does not turn, and it does not go back.</p>
+  </div>
+
+  <div class="finding">
+    <span class="num">4</span>
+    <h3>Agents ensemble in name only</h3>
+    <p>All three cohorts ensemble, but 78% of Codex's ensemble edits re-weight a member set it never grows, MLEvolve mostly averages seeds, and top humans put the largest share into adding a new member. For humans, an ensemble step that adds or changes a member raises the chance that the next version improves by 6.4 points, and one that only re-weights lowers it by 5.8 points. For Codex neither kind moves it. A checklist that only asks whether the agent ensembles would rank Codex above the top human cohort while its ensemble work does nothing. Edit size tells the same story: humans span the range, while Codex edits small and pays in steps and MLEvolve edits large and pays in waste.</p>
+  </div>
+
+  <div class="finding">
+    <span class="num">5</span>
+    <h3>A planning prompt closes only the part of the gap that reduces to instructions</h3>
+    <p>The findings name specific behaviors, so the paper tests whether naming them in a prompt changes them. The skill is about 1,000 tokens: anti-loop constraints, human-prior practices (K-fold from the first version, an early ensemble, cached out-of-fold predictions, multi-model blending), periodic self-checks, and task-specific priors. Codex CLI receives it at the start of a 12-hour run and again every 30 minutes; the backend, tools, extraction pipeline and grader stay fixed.</p>
+    <p>Three behaviors move onto the top-human value: re-weighting falls roughly fivefold, small early edits rise from near zero to above the top human rate, and ensembling attention lands on the human value. Where the prompt misses, it misses in two ways. It overshoots what it forbids: the plain hold-out drops to zero, below the quarter of states where top humans still use one. And it saturates on what it prescribes: Codex already ran K-fold averaging and kept out-of-fold predictions at or above human rates.</p>
+  </div>
+</div>
+
+<figure class="wide">
+  <div class="frame"><img src="figures/fig4-harness-scorecard.png" width="1800" height="991" loading="lazy" alt="Six bar charts comparing top-10% humans, top 10-40% humans, MLEvolve, Codex without the harness and Codex with the skill. Moving toward humans: re-weight ensemble falls from 50% to 11% of transitions (top humans 8.9%), ensembling attention from 26% to 21% of tag mass (top humans 21%), small early edits rise from 5.6% to 61% (top humans 43%). Missing: plain hold-out falls from 10% to 0% of states (top humans 24%), K-fold averaging 57% to 59% (top humans 51%), out-of-fold prediction 79% to 83% (top humans 33%)."></div>
+  <figcaption><b>Figure 4.</b> Harness effect on six discipline features. The dashed rule is the top-10% human value; blue frames mark features where Codex with the skill lands closer to it than prior Codex, red frames where it lands farther.</figcaption>
+</figure>
+
+<div class="wrap">
+  <p><strong>Scores improve, and the content is what does it.</strong> Five of the seven competitions improve, two are within noise, and none regress. An ablation that keeps the 30-minute re-injection schedule but removes the planning content lands at or below the baseline everywhere, so the gain comes from what the skill says rather than how often it is repeated. A practice transfers when the instruction names a level the agent has not already passed; a prohibition gives a direction with no destination.</p>
+</div>
+
+<figure class="wide">
+  <div class="frame"><img src="figures/fig5-thresholds.png" width="1800" height="813" loading="lazy" alt="Seven panels, one per paired competition, plotting the running best leaderboard percentile over the 12-hour budget for the Codex baseline and the Codex plus skill arm against shaded human cohort bands. Final percentiles, skill versus base: commonlit 0.63 vs 0.61, equity 0.28 vs 0.30, aes2 0.60 vs 0.26, amex 0.33 vs 0.00, gquest 1.00 vs 0.59, hms 0.30 vs 0.10, ranzcr 0.20 vs 0.20."></div>
+  <figcaption><b>Figure 5.</b> Running best leaderboard percentile over relative time, one panel per paired competition. Shaded bands are the human cohort thresholds; markers are the final percentile reached. The lift is uneven across competitions.</figcaption>
+</figure>
+
+<div class="wrap">
+  <p class="note">The prompt is more useful as a probe than as a fix. It marks the boundary between what instruction can reach and what it cannot. The two remaining gaps look like design problems: memory (search over the run's own earlier states) and control (a policy that reads where the run stands before deciding to turn).</p>
+</section>
+
+<section id="toolkit" aria-labelledby="toolkit-h">
+  <h2 id="toolkit-h">Analyze your own agent</h2>
+  <p>The pipeline that built the agent side of TraceML is released as a command-line tool. Point it at a finished run and it extracts every distinct code state, labels states and transitions with the released labelers, writes tables in the dataset's schema, and reports the run's behavior against the human cohorts of the same competition. It has been applied to Codex CLI, MLEvolve, AIDE, Claude Code and Gemini CLI runs. On the paper's own regression run it reproduces the released version count (16 code states from 2,505 grader calls) and the released state labels exactly.</p>
+<pre><code><span class="c"># install; labeling runs vLLM on one CUDA GPU</span>
+pip install "traceml-toolkit[label] @ git+https://github.com/JerryYan123/TraceML"
+
+<span class="c"># 1. record a CLI agent on an MLE-bench competition</span>
+traceml record runs/my_run --slug commonlitreadabilityprize \
+    --minutes 60 --harness my-agent -- my-agent-cli --prompt {PROMPT}
+
+<span class="c"># 2. extract, label and report in one command</span>
+traceml analyze runs/my_run
+
+<span class="c"># 3. the report is traceml_out/my_run/report.md</span></code></pre>
+  <p>The labelers download on first use. AIDE and MLEvolve search journals, and any git workspace that commits <code>submission.csv</code>, can be analyzed without recording.</p>
+  <p>Without a GPU, <code>traceml analyze --skip-label</code> still extracts the trajectory and places its score against the human cohort, and <code>traceml from-released &lt;key_id&gt;</code> turns any trajectory of the dataset into the same report.</p>
+
+  <h3>Example: a one-hour Claude Code run</h3>
+  <p>Claude Code with the <code>claude-haiku-4.5</code> backend, recorded for one hour on CommonLit Readability. Its 14 grader calls collapse into 13 distinct code states. The best RMSE, 0.733, is better than 20% of the 103 human trajectories on this competition, each counted at its best score. Against top-10% humans on the same competition it spends fewer of its edits on ensembling (13% of action labels against 20%), none on validation, and more on training and infrastructure. Eleven of its twelve transitions are optimization; none are debugging or verification, which make up 12% and 6% of top-human transitions.</p>
+  <figure>
+    <div class="frame"><img src="figures/demo-actions.png" width="1280" height="800" loading="lazy" alt="Dot plot of coarse-action shares for the Claude Code run, top-10% humans and Codex. The run spends more of its edits on training and infrastructure and less on ensembling, validation and inference than top humans."></div>
+    <figcaption>Coarse-action shares of the run against top-10% humans and the paper's Codex runs on the same competition.</figcaption>
+  </figure>
+  <figure>
+    <div class="frame"><img src="figures/demo-progress.png" width="1280" height="680" loading="lazy" alt="Step chart of the run's best RMSE so far falling from 0.88 to 0.733 over the hour, above the shaded middle half of human trajectories (about 0.49 to 0.69) and the human median of 0.54."></div>
+    <figcaption>Best score so far against the middle half of the human cohort (shaded) and its median. Lower RMSE is better.</figcaption>
+  </figure>
+  <p class="note">The paper's appendix describes this run as above 52% of the human cohort, with 36% exploration. That percentile ranked each human by their worst submission on lower-is-better metrics, and one transition went unlabeled. The released toolkit ranks humans by their best score and labels every transition with complete prompt inputs, which gives 20% and 8%.</p>
+</section>
+
+<section id="data" aria-labelledby="data-h">
+  <h2 id="data-h">Data and code</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Release</th><th>Contents</th></tr></thead>
+      <tbody>
+        <tr><td><a href="https://huggingface.co/datasets/jerryyan/TraceML">Dataset</a></td><td>State and action tables for three splits (paired, humans-only, the harness experiment), schemas and prompts, both labeler checkpoints, raw agent trajectories, and the dataset-building pipeline.</td></tr>
+        <tr><td><a href="https://github.com/JerryYan123/TraceML">Toolkit</a></td><td>The <code>traceml</code> command-line tool described above, with examples and tests.</td></tr>
+        <tr><td><a href="https://arxiv.org/abs/2608.26086">Paper</a></td><td>Full method, reliability checks, robustness analyses and the complete planning prompt.</td></tr>
+      </tbody>
+    </table>
+  </div>
+<pre><code>from datasets import load_dataset
+
+<span class="c"># one row per code version, and one row per transition</span>
+state  = load_dataset("jerryyan/TraceML", "state",  split="paired").to_pandas()
+action = load_dataset("jerryyan/TraceML", "action", split="paired").to_pandas()</code></pre>
+  <p class="muted">Annotations, schemas and dataset code are CC BY 4.0. The toolkit is Apache-2.0. The labeler weights inherit Apache-2.0 from Qwen3. Kaggle competition data is not redistributed, and human notebooks are included only under permissive licenses.</p>
+
+  <h3>Caveats</h3>
+  <ul>
+    <li>Human trajectories come from public notebook histories, which record saved versions, not all work. Humans also work over weeks with different tooling, so they are a reference distribution, not a budget-matched control.</li>
+    <li>Intent labels are inferred from code changes, not observed, and are used only at a coarse level together with actions, timing and scores.</li>
+    <li>Agent results cover two scaffolds on one backend model and seven competitions. More harnesses and non-Kaggle workflows would reduce platform-specific bias.</li>
+  </ul>
+</section>
+
+<section id="cite" aria-labelledby="cite-h">
+  <h2 id="cite-h">Citation</h2>
+<pre><code>@article{yan2026traceml,
+  title   = {TraceML: An Empirical Analysis of Human-Agent Planning in Machine Learning Development},
+  author  = {Yan, Jiarui and Sun, Weiwei and Li, Sijie and Li, Wenhan and Yang, Yiming},
+  journal = {arXiv preprint arXiv:2608.26086},
+  year    = {2026}
+}</code></pre>
+</section>
+
+<footer>
+  <p>Questions and issues: <a href="https://github.com/JerryYan123/TraceML/issues">GitHub issues</a> or jerryy2@cs.cmu.edu.</p>
+  <p>Figures 1 to 5 are from the paper. Page source: <a href="https://github.com/JerryYan123/TraceML/tree/main/docs">docs/</a>.</p>
+</footer>
+
+</div>
+</main>
+
+<script>
+  // copy buttons on code blocks
+  document.querySelectorAll("pre").forEach(function (pre) {
+    var b = document.createElement("button");
+    b.className = "copy"; b.type = "button"; b.textContent = "Copy";
+    b.addEventListener("click", function () {
+      var text = pre.querySelector("code").innerText;
+      (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () {
+        b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy"; }, 1400);
+      }).catch(function () { b.textContent = "Select and copy"; });
+    });
+    pre.appendChild(b);
+  });
+  // hover and focus tooltips on chart bars
+  document.querySelectorAll(".chart").forEach(function (chart) {
+    var tip = chart.querySelector(".tooltip");
+    if (!tip) return;
+    function show(el, x, y) {
+      tip.textContent = el.getAttribute("data-tip");
+      var box = chart.getBoundingClientRect();
+      var left = Math.min(Math.max(8, x - box.left + 12), box.width - 270);
+      tip.style.left = Math.max(8, left) + "px";
+      tip.style.top = (y - box.top + 14) + "px";
+      tip.style.opacity = 1;
+    }
+    chart.querySelectorAll("[data-tip]").forEach(function (el) {
+      el.addEventListener("mousemove", function (e) { show(el, e.clientX, e.clientY); });
+      el.addEventListener("mouseleave", function () { tip.style.opacity = 0; });
+      el.addEventListener("focus", function () {
+        var r = el.getBoundingClientRect(); show(el, r.left + 90, r.top + 10);
+      });
+      el.addEventListener("blur", function () { tip.style.opacity = 0; });
+    });
+  });
+</script>
+</body>
+</html>

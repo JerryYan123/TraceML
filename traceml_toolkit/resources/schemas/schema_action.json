@@ -1,0 +1,60 @@
+{
+  "version": "0.1",
+  "date": "2026-04-30",
+  "description": "Phase 2 Action+Intent annotation schema v0. Action = WHAT changed (multi-label coarse + fine). Intent = WHY (single-label, orthogonal to action).",
+
+  "coarse_actions": {
+    "_doc": "10 + other coarse action categories. Multi-label: pick ALL that apply.",
+    "data": "Data loading, cleaning, encoding, type conversion, missing value handling, dataset adapter",
+    "features": "Feature engineering, feature selection, transformations, text vectorization",
+    "augmentation": "Data augmentation changes (image/text/audio/mixup/cutmix)",
+    "model": "Architecture or backbone swap, add/remove layers, head modification, pretrained weight change",
+    "training": "Training config: optimizer, loss, scheduler, learning rate, regularization, epochs, batch size, hparams",
+    "ensemble": "Model combination: add/remove members, weight adjustment, stacking/blending changes",
+    "validation": "CV scheme, evaluation metric, fold strategy, split logic changes",
+    "inference": "Prediction pipeline, post-processing, TTA, threshold tuning, submission format",
+    "infra": "Environment, imports, paths, GPU config, IO, dependencies, seed, logging",
+    "housekeeping": "Debug fix, syntax fix, code restructure, cosmetic cleanup, noop, revert",
+    "other": "Doesn't fit any above — MUST provide other_action_note with proposed_tag + description"
+  },
+
+  "intent_categories": {
+    "_doc": "6 + other intent categories. List 1-2 intents (primary first). Most transitions need only 1.",
+    "exploration": "Trying something qualitatively new (new model family, new feature type, new approach, building first pipeline)",
+    "optimization": "Refining an existing approach (tuning hparams, adjusting weights, ensemble tweaks, late-stage polishing)",
+    "pivoting": "Abandoning current direction for a fundamentally different one (major rewrite, fork adoption)",
+    "debugging": "Fixing errors, crashes, regressions, reverting broken changes",
+    "restructuring": "Refactoring, cleanup, reorganizing code with no functional change",
+    "verification": "Minimal or zero code change, running to check score or test submission",
+    "other": "Doesn't fit any above — MUST provide other_intent_note with proposed_tag + description"
+  },
+
+  "confidence_levels": ["high", "mid", "low"],
+  "confidence_doc": "high = explicit code evidence (clear diff hunk), mid = strong contextual inference, low = ambiguous or indirect",
+
+  "magnitude_levels": ["micro", "minor", "major", "overhaul"],
+  "magnitude_doc": "micro = <5 lines changed, cosmetic; minor = localized change to one component; major = significant change to multiple components; overhaul = near-complete rewrite or fork adoption",
+
+  "score_effect_levels": ["improving", "plateau", "regressing", "unknown"],
+  "score_effect_doc": "Based on score_old vs score_new. improving = score got better, plateau = no meaningful change, regressing = score got worse, unknown = no linked scores",
+
+  "output_format": {
+    "coarse_actions": ["string (multi-label list from coarse_actions)"],
+    "fine_actions": [{"action": "string", "parent": "string (coarse)", "confidence": "high|mid|low"}],
+    "intents": [{"intent": "string (from intent_categories)", "confidence": "high|mid|low"}],
+    "goal_nl": "string (one sentence: what was the author trying to achieve)",
+    "diff_summary": "string (one sentence: what concretely changed in the code)",
+    "magnitude": "string (from magnitude_levels)",
+    "score_effect": "string (from score_effect_levels)",
+    "other_action_note": "null or {proposed_tag: string, parent: string, description: string}",
+    "other_intent_note": "null or {proposed_tag: string, description: string}"
+  },
+
+  "design_principles": [
+    "Action (WHAT) and Intent (WHY) are orthogonal: same action can serve different intents, same intent can involve different actions",
+    "Actions are multi-label (a diff can touch model + training); Intents are 1-2 labels (primary first, most transitions need only 1)",
+    "both have 'other' escape hatches with mandatory proposed_tag + description for LLM discovery",
+    "Fine actions are closed-list + other_<parent> with confidence, following Phase 1 pattern",
+    "Intent confidence: high = clear from diff, mid = reasonable inference, low = genuinely ambiguous"
+  ]
+}

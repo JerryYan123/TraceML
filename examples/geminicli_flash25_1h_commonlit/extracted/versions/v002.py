@@ -1,0 +1,300 @@
+import os
+import gc
+import time
+import random
+import warnings
+import numpy as np
+import pandas as pd
+import torch
+import torch.nn as nn
+from torch.utils.data import Dataset, DataLoader
+from sklearn.model_selection import KFold
+from transformers import AutoTokenizer, AutoModel, AutoConfig
+from transformers import get_cosine_schedule_with_warmup
+
+warnings.filterwarnings("ignore")
+
+# Set memory allocation config to avoid fragmentation in low memory environments
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
+class Config:
+    model_name = "microsoft/deberta-v3-base"
+    max_len = 256
+    batch_size = 4        # Low batch size to fit within ~6GB of free VRAM
+    accum_steps = 4       # Effective batch size = 16
+    epochs = 4
+    lr = 2e-5
+    min_lr = 1e-6
+    weight_decay = 0.01
+    seed = 42
+    n_folds = 5
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    num_workers = 2
+    warmup_ratio = 0.1
+    grad_clip = 1.0
+
+def seed_everything(seed):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+seed_everything(Config.seed)
+
+class ReadabilityDataset(Dataset):
+    def __init__(self, df, tokenizer, max_len, is_test=False):
+        self.excerpt = df['excerpt'].values
+        self.tokenizer = tokenizer
+        self.max_len = max_len
+        self.is_test = is_test
+        if not is_test:
+            self.target = df['target'].values
+
+    def __len__(self):
+        return len(self.excerpt)
+
+    def __getitem__(self, item):
+        text = str(self.excerpt[item])
+        inputs = self.tokenizer(
+            text,
+            max_length=self.max_len,
+            padding="max_length",
+            truncation=True,
+            return_tensors=None
+        )
+        
+        item_dict = {
+            'input_ids': torch.tensor(inputs['input_ids'], dtype=torch.long),
+            'attention_mask': torch.tensor(inputs['attention_mask'], dtype=torch.long)
+        }
+        
+        if 'token_type_ids' in inputs:
+            item_dict['token_type_ids'] = torch.tensor(inputs['token_type_ids'], dtype=torch.long)
+            
+        if not self.is_test:
+            item_dict['target'] = torch.tensor(self.target[item], dtype=torch.float)
+            
+        return item_dict
+
+class MeanPooling(nn.Module):
+    def __init__(self):
+        super(MeanPooling, self).__init__()
+        
+    def forward(self, last_hidden_state, attention_mask):
+        input_mask_expanded = attention_mask.unsqueeze(-1).expand(last_hidden_state.size()).float()
+        sum_embeddings = torch.sum(last_hidden_state * input_mask_expanded, 1)
+        sum_mask = input_mask_expanded.sum(1)
+        sum_mask = torch.clamp(sum_mask, min=1e-9)
+        return sum_embeddings / sum_mask
+
+class ReadabilityModel(nn.Module):
+    def __init__(self, model_name):
+        super(ReadabilityModel, self).__init__()
+        self.config = AutoConfig.from_pretrained(model_name)
+        self.config.update({
+            "output_hidden_states": True,
+            "hidden_dropout_prob": 0.0,
+            "attention_probs_dropout_prob": 0.0
+        })
+        self.transformer = AutoModel.from_pretrained(model_name, config=self.config)
+        # Enable gradient checkpointing to drastically reduce memory usage
+        self.transformer.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
+        self.pooler = MeanPooling()
+        self.regressor = nn.Linear(self.config.hidden_size, 1)
+        
+    def forward(self, input_ids, attention_mask, token_type_ids=None):
+        if token_type_ids is not None:
+            outputs = self.transformer(input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
+        else:
+            outputs = self.transformer(input_ids=input_ids, attention_mask=attention_mask)
+        
+        last_hidden_state = outputs.last_hidden_state
+        pooled_output = self.pooler(last_hidden_state, attention_mask)
+        logits = self.regressor(pooled_output)
+        return logits.squeeze(-1)
+
+def train_epoch(model, dataloader, optimizer, scheduler, scaler, device):
+    model.train()
+    total_loss = 0
+    criterion = nn.MSELoss()
+    
+    optimizer.zero_grad()
+    
+    for step, batch in enumerate(dataloader):
+        input_ids = batch['input_ids'].to(device)
+        attention_mask = batch['attention_mask'].to(device)
+        token_type_ids = batch['token_type_ids'].to(device) if 'token_type_ids' in batch else None
+        targets = batch['target'].to(device)
+        
+        with torch.amp.autocast('cuda'):
+            preds = model(input_ids, attention_mask, token_type_ids)
+            loss = criterion(preds, targets)
+            loss = loss / Config.accum_steps
+            
+        scaler.scale(loss).backward()
+        
+        if (step + 1) % Config.accum_steps == 0 or (step + 1) == len(dataloader):
+            scaler.unscale_(optimizer)
+            nn.utils.clip_grad_norm_(model.parameters(), Config.grad_clip)
+            scaler.step(optimizer)
+            scaler.update()
+            optimizer.zero_grad()
+            scheduler.step()
+            
+        total_loss += loss.item() * Config.accum_steps
+        
+    return total_loss / len(dataloader)
+
+def valid_epoch(model, dataloader, device):
+    model.eval()
+    preds_all = []
+    targets_all = []
+    
+    with torch.no_grad():
+        for batch in dataloader:
+            input_ids = batch['input_ids'].to(device)
+            attention_mask = batch['attention_mask'].to(device)
+            token_type_ids = batch['token_type_ids'].to(device) if 'token_type_ids' in batch else None
+            targets = batch['target'].to(device)
+            
+            with torch.amp.autocast('cuda'):
+                preds = model(input_ids, attention_mask, token_type_ids)
+                
+            preds_all.extend(preds.cpu().numpy())
+            targets_all.extend(targets.cpu().numpy())
+            
+    preds_all = np.array(preds_all)
+    targets_all = np.array(targets_all)
+    rmse = np.sqrt(np.mean((targets_all - preds_all)**2))
+    return rmse, preds_all
+
+def main():
+    print("Setting up directory and reading data...")
+    os.makedirs("models", exist_ok=True)
+    
+    train_path = "<DATASET_ROOT>/mle-bench/cache/commonlitreadabilityprize/prepared/public/train.csv"
+    test_path = "<DATASET_ROOT>/mle-bench/cache/commonlitreadabilityprize/prepared/public/test.csv"
+    
+    train = pd.read_csv(train_path)
+    test = pd.read_csv(test_path)
+    
+    print(f"Train samples: {len(train)}, Test samples: {len(test)}")
+    
+    tokenizer = AutoTokenizer.from_pretrained(Config.model_name)
+    
+    kf = KFold(n_splits=Config.n_folds, shuffle=True, random_state=Config.seed)
+    oof_predictions = np.zeros(len(train))
+    test_predictions = np.zeros(len(test))
+    
+    test_dataset = ReadabilityDataset(test, tokenizer, Config.max_len, is_test=True)
+    test_loader = DataLoader(test_dataset, batch_size=Config.batch_size*4, shuffle=False, num_workers=Config.num_workers, pin_memory=True)
+    
+    fold_rmse_list = []
+    
+    for fold, (train_idx, val_idx) in enumerate(kf.split(train)):
+        print(f"\n========== FOLD {fold} ==========")
+        train_fold = train.iloc[train_idx].reset_index(drop=True)
+        val_fold = train.iloc[val_idx].reset_index(drop=True)
+        
+        train_dataset = ReadabilityDataset(train_fold, tokenizer, Config.max_len)
+        val_dataset = ReadabilityDataset(val_fold, tokenizer, Config.max_len)
+        
+        train_loader = DataLoader(train_dataset, batch_size=Config.batch_size, shuffle=True, num_workers=Config.num_workers, pin_memory=True, drop_last=True)
+        val_loader = DataLoader(val_dataset, batch_size=Config.batch_size*4, shuffle=False, num_workers=Config.num_workers, pin_memory=True)
+        
+        model = ReadabilityModel(Config.model_name)
+        model.to(Config.device)
+        
+        # Optimizer with slight weight decay on non-bias parameters
+        param_optimizer = list(model.named_parameters())
+        no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
+        optimizer_parameters = [
+            {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': Config.weight_decay},
+            {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+        ]
+        
+        optimizer = torch.optim.AdamW(optimizer_parameters, lr=Config.lr)
+        
+        steps_per_epoch = len(train_loader) // Config.accum_steps
+        if len(train_loader) % Config.accum_steps != 0:
+            steps_per_epoch += 1
+        num_training_steps = int(steps_per_epoch * Config.epochs)
+        num_warmup_steps = int(num_training_steps * Config.warmup_ratio)
+        
+        scheduler = get_cosine_schedule_with_warmup(
+            optimizer,
+            num_warmup_steps=num_warmup_steps,
+            num_training_steps=num_training_steps
+        )
+        
+        scaler = torch.cuda.amp.GradScaler()
+        
+        best_rmse = float('inf')
+        best_preds = None
+        
+        for epoch in range(Config.epochs):
+            start_time = time.time()
+            train_loss = train_epoch(model, train_loader, optimizer, scheduler, scaler, Config.device)
+            val_rmse, val_preds = valid_epoch(model, val_loader, Config.device)
+            
+            elapsed = time.time() - start_time
+            print(f"Epoch {epoch} - Train Loss: {train_loss:.5f} - Val RMSE: {val_rmse:.5f} - Time: {elapsed:.1f}s")
+            
+            if val_rmse < best_rmse:
+                best_rmse = val_rmse
+                best_preds = val_preds
+                torch.save(model.state_dict(), f"models/deberta_fold{fold}.pt")
+                print(f"  --> Saved new best model with RMSE {best_rmse:.5f}")
+                
+        print(f"Fold {fold} finished. Best Val RMSE: {best_rmse:.5f}")
+        fold_rmse_list.append(best_rmse)
+        oof_predictions[val_idx] = best_preds
+        
+        # Predict on test using the best model for this fold
+        best_model = ReadabilityModel(Config.model_name)
+        best_model.load_state_dict(torch.load(f"models/deberta_fold{fold}.pt"))
+        best_model.to(Config.device)
+        best_model.eval()
+        
+        fold_test_preds = []
+        with torch.no_grad():
+            for batch in test_loader:
+                input_ids = batch['input_ids'].to(Config.device)
+                attention_mask = batch['attention_mask'].to(Config.device)
+                token_type_ids = batch['token_type_ids'].to(Config.device) if 'token_type_ids' in batch else None
+                
+                with torch.amp.autocast('cuda'):
+                    preds = best_model(input_ids, attention_mask, token_type_ids)
+                fold_test_preds.extend(preds.cpu().numpy())
+                
+        test_predictions += np.array(fold_test_preds) / Config.n_folds
+        
+        # Clean up memory
+        del model, best_model, optimizer, scheduler, scaler
+        gc.collect()
+        torch.cuda.empty_cache()
+        
+    print("\n==========================================")
+    print(f"Mean Fold RMSE: {np.mean(fold_rmse_list):.5f}")
+    overall_rmse = np.sqrt(np.mean((train['target'].values - oof_predictions)**2))
+    print(f"Overall CV RMSE: {overall_rmse:.5f}")
+    print("==========================================")
+    
+    # Save OOF predictions for future ensembling
+    np.save("oof_deberta_base.npy", oof_predictions)
+    np.save("test_deberta_base.npy", test_predictions)
+    
+    # Save submission file
+    submission = pd.DataFrame({
+        'id': test['id'],
+        'target': test_predictions
+    })
+    submission_path = "<DATASET_ROOT>/planning-research/agent_data/runners/_active/gemini/runs/run_20260801_203455_flash25_rec_1h_commonlitreadabilityprize/submission.csv"
+    submission.to_csv(submission_path, index=False)
+    print(f"Saved submission to {submission_path}")
+
+if __name__ == '__main__':
+    main()

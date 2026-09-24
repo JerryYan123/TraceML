@@ -1,0 +1,8 @@
+[loop start pid=4147888 end=1785634502 reminder=0]
+[respawn iter=1 remain=3600s prompt=task]
+[respawn iter=1 exited rc=0 tag=task]
+[respawn iter=2 remain=696s prompt=cont]
+[respawn iter=2 exited rc=0 tag=cont]
+[respawn iter=3 remain=457s prompt=cont]
+[respawn iter=3 exited rc=124 tag=cont]
+[loop end 21:35:07]
