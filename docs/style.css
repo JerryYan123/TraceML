@@ -16,6 +16,7 @@
   --figure-bg: #ffffff;
   --shadow: 0 1px 2px rgba(17, 17, 16, 0.06), 0 0 0 1px rgba(17, 17, 16, 0.06);
   --gutter: clamp(16px, 4vw, 72px);
+  --fig-max: 1100px;
   --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
@@ -150,13 +151,10 @@ strong { font-weight: 650; }
 
 /* ---- figures ---- */
 figure { margin: 28px 0; }
-/* Figures grow with the window: 85% of the content width on wide screens, at most 1500px, centered. */
+/* Figures shrink with the window and stop growing at a fixed size (--fig-max), centered. */
 figure.wide { margin: 32px 0; padding: 0 var(--gutter); }
-figure.wide > .frame, figure.wide > figcaption { width: min(100%, 1500px); margin-left: auto; margin-right: auto; }
-@media (min-width: 900px) {
-  figure.wide > .frame, figure.wide > figcaption { width: min(85%, 1500px); }
-}
-figure.demo { max-width: 1040px; margin: 24px auto; }
+figure.wide > .frame, figure.wide > figcaption { width: min(100%, var(--fig-max)); margin-left: auto; margin-right: auto; }
+figure.demo { max-width: 900px; margin: 24px auto; }
 figure .frame {
   background: var(--figure-bg); border-radius: 10px; padding: 14px;
   box-shadow: var(--shadow);
@@ -177,7 +175,7 @@ figcaption b { color: var(--ink); }
 .finding h3 { margin-top: 4px; }
 
 /* ---- inline chart ---- */
-.chart { background: var(--surface); box-shadow: var(--shadow); border-radius: 10px; padding: 16px 18px 10px; margin: 20px 0; position: relative; }
+.chart { background: var(--surface); box-shadow: var(--shadow); border-radius: 10px; padding: 16px 18px 10px; margin: 20px auto; position: relative; max-width: var(--fig-max); }
 .chart-title { font-size: 15px; font-weight: 600; margin: 0; }
 .chart-sub { font-size: 13.5px; color: var(--muted); margin: 2px 0 10px; }
 .bars { --label-w: 84px; position: relative; padding: 4px 0 6px; }
