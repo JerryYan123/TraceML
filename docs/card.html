@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1600">
+<title>TraceML share card</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* 1600x900 image for social posts: render with a 1600x900 window and screenshot. */
+  body { margin: 0; background: #0b0e14; overflow: hidden; }
+  .card { width: 1600px; height: 900px; box-sizing: border-box; padding: 40px 56px 0; border: 0; }
+  .card-top { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; }
+  .card h1 { font-size: 76px; margin: 0; }
+  .card .tagline { margin: 6px 0 0; font-size: 25px; color: var(--h-ink2); font-weight: 450; }
+  .card .badges { flex-direction: column; align-items: flex-end; margin: 0 0 6px; }
+  .card .badge { font-size: 15px; }
+  .card .versus-body { position: relative; margin-top: 18px; }
+  .card .vs-legend { margin: 0 0 12px; font-size: 14px; }
+  .card .vs-side { padding: 12px 18px 4px; }
+  .card .trace { padding: 8px 0 10px; }
+  .card .trace-plot { height: 46px; }
+  .card .ribbon { height: 16px; }
+  .card .diff-grid { margin-top: 12px; gap: 12px; }
+  .card .diff-card { padding: 12px 18px 8px; }
+  .card .diff-take { margin-bottom: 6px; }
+  .card .stack-row, .card .sbar-row { margin: 5px 0; }
+  .card-foot { position: absolute; left: 56px; right: 56px; bottom: 16px; display: flex; justify-content: space-between;
+    font-size: 15px; color: var(--h-muted); }
+  .card-foot b { color: var(--h-ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="hero-band card">
+  <div class="hero-glow" aria-hidden="true" style="animation: none"></div>
+  <div class="card-top">
+    <div>
+      <h1>TraceML</h1>
+      <p class="tagline">How AI agents and human experts develop ML solutions differently</p>
+    </div>
+    <div class="badges">
+      <span class="badge"><b>NeurIPS 2026</b>Evaluations &amp; Datasets Track</span>
+      <span class="badge"><b>COLM 2026</b>Workshop on Agent Behavior</span>
+    </div>
+  </div>
+  <div class="versus-body static" data-traces="data/traces.json"></div>
+  <div class="card-foot"><span><b>jerryyan123.github.io/TraceML</b> &middot; arXiv:2608.26086</span><span>Real trajectories, Kaggle Automated Essay Scoring 2.0</span></div>
+</div>
+<script src="traces.js"></script>
+</body>
+</html>
