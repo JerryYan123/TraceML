@@ -17,8 +17,8 @@ authors:
   - family-names: Yang
     given-names: Yiming
 preferred-citation:
-  type: article
-  title: "TraceML: An Empirical Analysis of Human-Agent Planning in Machine Learning Development"
+  type: conference-paper
+  title: "TraceML: What Auto-Research Agents Miss in Long-Horizon ML Development"
   authors:
     - family-names: Yan
       given-names: Jiarui
@@ -30,6 +30,12 @@ preferred-citation:
       given-names: Wenhan
     - family-names: Yang
       given-names: Yiming
-  journal: "arXiv preprint arXiv:2608.26086"
+  collection-title: "Advances in Neural Information Processing Systems (NeurIPS), Track on Evaluations and Datasets"
+  conference:
+    name: "NeurIPS 2026"
   year: 2026
   url: "https://arxiv.org/abs/2608.26086"
+  identifiers:
+    - type: url
+      value: "https://arxiv.org/abs/2608.26086"
+      description: "arXiv:2608.26086"

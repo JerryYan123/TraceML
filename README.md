@@ -1,4 +1,10 @@
-# TraceML toolkit
+# TraceML: What Auto-Research Agents Miss in Long-Horizon ML Development
+
+**Jiarui Yan\*, Weiwei Sun\*, Sijie Li, Wenhan Li, Yiming Yang** · Carnegie Mellon University · \*equal contribution
+
+📣 Accepted at **NeurIPS 2026** (Evaluations & Datasets Track) and the **COLM 2026 Workshop on Agent Behavior** (WAB, October 9, San Francisco).
+
+**[🌐 Project page](https://jerryyan123.github.io/TraceML/) · [📄 Paper](https://arxiv.org/abs/2608.26086) · [🤗 Dataset](https://huggingface.co/datasets/jerryyan/TraceML) · [🤗 Models](https://huggingface.co/jerryyan/TraceML-Labelers) · [Citation](#citation)**
 
 [![ci](https://github.com/JerryYan123/TraceML/actions/workflows/ci.yml/badge.svg)](https://github.com/JerryYan123/TraceML/actions/workflows/ci.yml)
 [![arXiv](https://img.shields.io/badge/arXiv-2608.26086-b31b1b.svg)](https://arxiv.org/abs/2608.26086)
@@ -6,12 +12,19 @@
 [![models](https://img.shields.io/badge/%F0%9F%A4%97%20models-jerryyan%2FTraceML--Labelers-yellow)](https://huggingface.co/jerryyan/TraceML-Labelers)
 [![license](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-Read any ML-engineering agent run against human practice. The toolkit turns a finished agent
-run into a [TraceML](https://jerryyan123.github.io/TraceML/) trajectory, labels every code
-version and every edit with the released labelers, and reports how the run's development
-process compares with 4,465 human Kaggle trajectories and with the agents studied in the paper.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/figures/readme-figure-dark.png">
+  <img src="docs/figures/readme-figure-light.png" alt="Agents versus human experts on Kaggle's Automated Essay Scoring 2.0. Left, a Codex run whose 64 edits are almost all submission tuning and an MLEvolve branch whose 8 edits mostly mutate the model; right, two top-10% humans whose edits mix direction changes with other work and end at the 97th and 92nd percentiles. Below, the share of edits per cluster for each cohort, pivot rates (humans 25%, Codex 9%, MLEvolve 58%) and return rates (top humans 9%, Codex 1 of 658, MLEvolve 0 of 344).">
+</picture>
 
-**[Project page](https://jerryyan123.github.io/TraceML/) · [Paper](https://arxiv.org/abs/2608.26086) · [Dataset](https://huggingface.co/datasets/jerryyan/TraceML) · [Labelers](https://huggingface.co/jerryyan/TraceML-Labelers)**
+<sub>Real trajectories from TraceML on Kaggle's Automated Essay Scoring 2.0. Each cell is one edit, colored by what it changed; the line above it is the best score so far as a percentile of the human trajectories. The interactive version is on the [project page](https://jerryyan123.github.io/TraceML/).</sub>
+
+## The toolkit
+
+This repository is the open-source toolkit from the paper. It reads any ML-engineering agent run
+against human practice: it turns a finished run into a TraceML trajectory, labels every code
+version and every edit with the released labeling models, and reports how the run's development
+process compares with 4,465 human Kaggle trajectories and with the agents studied in the paper.
 
 ```bash
 pip install "traceml-toolkit[label] @ git+https://github.com/JerryYan123/TraceML"   # Linux + CUDA GPU
@@ -194,11 +207,13 @@ See [CHANGELOG.md](CHANGELOG.md).
 ## Citation
 
 ```bibtex
-@article{yan2026traceml,
-  title   = {TraceML: An Empirical Analysis of Human-Agent Planning in Machine Learning Development},
-  author  = {Yan, Jiarui and Sun, Weiwei and Li, Sijie and Li, Wenhan and Yang, Yiming},
-  journal = {arXiv preprint arXiv:2608.26086},
-  year    = {2026}
+@inproceedings{yan2026traceml,
+  title         = {TraceML: What Auto-Research Agents Miss in Long-Horizon ML Development},
+  author        = {Yan, Jiarui and Sun, Weiwei and Li, Sijie and Li, Wenhan and Yang, Yiming},
+  booktitle     = {Advances in Neural Information Processing Systems (NeurIPS), Track on Evaluations and Datasets},
+  year          = {2026},
+  eprint        = {2608.26086},
+  archivePrefix = {arXiv}
 }
 ```
 

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1600">
+<title>TraceML figure export</title>
+<meta name="robots" content="noindex">
+<script>
+  // figure.html?theme=light|dark renders the agents-vs-humans figure alone, for the README images:
+  // screenshot with a 1600px-wide window, then crop to the content.
+  (function () {
+    var m = /theme=(light|dark)/.exec(location.search);
+    document.documentElement.setAttribute("data-theme", m ? m[1] : "dark");
+  })();
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { margin: 0; background: var(--h-bg); }
+  .fig { width: 1600px; box-sizing: border-box; padding: 32px 44px 36px; border: 0; }
+  .fig .vs-legend { margin: 0 0 14px; }
+</style>
+</head>
+<body>
+<div class="hero-band fig">
+  <div class="versus-body static" data-traces="data/traces.json"></div>
+</div>
+<script src="traces.js"></script>
+</body>
+</html>

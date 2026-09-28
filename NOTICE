@@ -13,8 +13,9 @@ This repository also redistributes material from the TraceML dataset
   * examples/                                                (two recorded agent runs and their labels)
   * tests/fixtures/dataset_subset/                           (a slice of the paired split)
 
-  Yan, J., Sun, W., Li, S., Li, W., Yang, Y. TraceML: An Empirical Analysis of
-  Human-Agent Planning in Machine Learning Development. arXiv:2608.26086, 2026.
+  Yan, J., Sun, W., Li, S., Li, W., Yang, Y. TraceML: What Auto-Research Agents
+  Miss in Long-Horizon ML Development. NeurIPS 2026 (Track on Evaluations and
+  Datasets). arXiv:2608.26086.
 
 Rows of the dataset slice derive from Meta Kaggle (Apache 2.0); human notebook
 code is redistributed only under permissive licenses, as recorded in the dataset.
