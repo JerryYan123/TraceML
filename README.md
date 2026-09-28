@@ -3,6 +3,8 @@
 [![ci](https://github.com/JerryYan123/TraceML/actions/workflows/ci.yml/badge.svg)](https://github.com/JerryYan123/TraceML/actions/workflows/ci.yml)
 [![arXiv](https://img.shields.io/badge/arXiv-2608.26086-b31b1b.svg)](https://arxiv.org/abs/2608.26086)
 [![dataset](https://img.shields.io/badge/%F0%9F%A4%97%20dataset-jerryyan%2FTraceML-yellow)](https://huggingface.co/datasets/jerryyan/TraceML)
+[![state labeler](https://img.shields.io/badge/%F0%9F%A4%97%20model-State--Labeler-yellow)](https://huggingface.co/jerryyan/TraceML-State-Labeler)
+[![action labeler](https://img.shields.io/badge/%F0%9F%A4%97%20model-Action--Labeler-yellow)](https://huggingface.co/jerryyan/TraceML-Action-Labeler)
 [![license](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
 Read any ML-engineering agent run against human practice. The toolkit turns a finished agent
@@ -10,7 +12,7 @@ run into a [TraceML](https://jerryyan123.github.io/TraceML/) trajectory, labels 
 version and every edit with the released labelers, and reports how the run's development
 process compares with 4,465 human Kaggle trajectories and with the agents studied in the paper.
 
-**[Project page](https://jerryyan123.github.io/TraceML/) · [Paper](https://arxiv.org/abs/2608.26086) · [Dataset](https://huggingface.co/datasets/jerryyan/TraceML)**
+**[Project page](https://jerryyan123.github.io/TraceML/) · [Paper](https://arxiv.org/abs/2608.26086) · [Dataset](https://huggingface.co/datasets/jerryyan/TraceML) · Labelers: [state](https://huggingface.co/jerryyan/TraceML-State-Labeler), [action](https://huggingface.co/jerryyan/TraceML-Action-Labeler)**
 
 ```bash
 pip install "traceml-toolkit[label] @ git+https://github.com/JerryYan123/TraceML"   # Linux + CUDA GPU
@@ -58,7 +60,9 @@ pip install "traceml-toolkit[transformers] @ git+https://github.com/JerryYan123/
 ```
 
 The labelers (two Qwen3-1.7B checkpoints, about 3.4 GB each) and the reference tables (about
-11 MB) download from the HuggingFace dataset on first use into `~/.cache/traceml`. Fetch them
+11 MB) download from the HuggingFace dataset on first use into `~/.cache/traceml`. The same labelers are also
+published as model repos, [TraceML-State-Labeler](https://huggingface.co/jerryyan/TraceML-State-Labeler) and
+[TraceML-Action-Labeler](https://huggingface.co/jerryyan/TraceML-Action-Labeler), for use outside the toolkit. Fetch them
 ahead of time with `traceml download-models`, or point at an existing clone of the dataset with
 `--dataset-dir` / `--models-dir`. `traceml info` shows what was found.
 
