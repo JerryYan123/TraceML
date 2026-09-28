@@ -1,7 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-<script>document.documentElement.classList.add("js")</script>
+<script>
+  // theme: a saved choice wins, otherwise the system setting
+  (function () {
+    var d = document.documentElement; d.classList.add("js");
+    try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") d.setAttribute("data-theme", t); } catch (e) {}
+  })();
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TraceML: Human-Agent Planning in ML Development</title>
@@ -22,12 +28,15 @@
 <div class="topbar">
   <div class="wrap-wide">
     <a class="brand" href="#top">TraceML</a>
-    <nav aria-label="Sections">
-      <a href="#findings">Findings</a>
-      <a href="#toolkit">Toolkit</a>
-      <a href="#data" class="hide-sm">Data</a>
-      <a href="#cite">Cite</a>
-    </nav>
+    <div class="topbar-right">
+      <nav aria-label="Sections">
+        <a href="#findings">Findings</a>
+        <a href="#toolkit">Toolkit</a>
+        <a href="#data" class="hide-sm">Data</a>
+        <a href="#cite">Cite</a>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch color theme"></button>
+    </div>
   </div>
 </div>
 
@@ -306,6 +315,28 @@ action = load_dataset("jerryyan/TraceML", "action", split="paired").to_pandas()<
   })();
 </script>
 <script>
+  // light / dark toggle
+  (function () {
+    var root = document.documentElement, btn = document.querySelector(".theme-toggle");
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    var SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>';
+    var MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
+    function current() { return root.getAttribute("data-theme") || (mq.matches ? "dark" : "light"); }
+    function sync() {
+      var dark = current() === "dark";
+      btn.innerHTML = dark ? SUN : MOON;
+      btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+      btn.title = btn.getAttribute("aria-label");
+    }
+    btn.addEventListener("click", function () {
+      var next = current() === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("theme", next); } catch (e) {}
+      sync();
+    });
+    if (mq.addEventListener) mq.addEventListener("change", sync);
+    sync();
+  })();
   // copy buttons on code blocks
   document.querySelectorAll("pre").forEach(function (pre) {
     var b = document.createElement("button");
