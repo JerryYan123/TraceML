@@ -2,7 +2,7 @@
 
 **Jiarui Yan\*, Weiwei Sun\*, Sijie Li, Wenhan Li, Yiming Yang** · Carnegie Mellon University · \*equal contribution
 
-📣 Accepted at **NeurIPS 2026** (Evaluations & Datasets Track) and the **COLM 2026 Workshop on Agent Behavior** (WAB, October 9, San Francisco).
+📣 Accepted at **NeurIPS 2026** (Evaluations & Datasets Track), the **COLM 2026 Workshop on Agent Behavior** (WAB, October 9, San Francisco) and the **NeurIPS 2026 Workshop on Evaluation of Interactive Agents** (IAEval, December, Atlanta).
 
 **[🌐 Project page](https://jerryyan123.github.io/TraceML/) · [📄 Paper](https://arxiv.org/abs/2608.26086) · [🤗 Dataset](https://huggingface.co/datasets/jerryyan/TraceML) · [🤗 Models](https://huggingface.co/jerryyan/TraceML-Labelers) · [Citation](#citation)**
 
